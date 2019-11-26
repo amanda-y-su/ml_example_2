@@ -128,3 +128,37 @@ metrics(x_2, truth = dvote, estimate = pred_dvote) %>%
 
 ```
 
+```{r}
+
+#clean up the above code to make it cleaner. key functions: initial_split(), logistic_reg(), set_engine(), fit(), predict(), bind_cols(), metrics() and vfold_cv().
+
+logistic_reg() %>% 
+  set_engine("glm") %>%
+  fit(dvote ~ gender + party + state + office, data = clean)  %>%
+  predict(new_data = clean) %>%
+  bind_cols(clean) %>%
+  metrics(truth = dvote, estimate = .pred_class) %>%
+  gt() %>% 
+    tab_header("Model 2 Evaluation on All Data")
+  
+```
+
+```{r}
+
+# split dataset into training and testing data 
+
+x_split <- initial_split(clean, prop = 0.01)
+
+sample_data <- training(x_split)
+
+logistic_reg() %>% 
+  set_engine("glm") %>%
+  fit(dvote ~ gender + party + state + office, data = sample_data)  %>%
+  predict(new_data = sample_data) %>%
+  bind_cols(sample_data) %>%
+  metrics(truth = dvote, estimate = .pred_class) %>%
+  gt() %>% 
+    tab_header("Model 2 Evaluation on All Data")
+  
+```
+
